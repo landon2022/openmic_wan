@@ -136,13 +136,18 @@ RUN git clone https://github.com/M1kep/ComfyLiterals.git ComfyLiterals
 
 RUN pip list --format=freeze
 # Go back to the root
-WORKDIR /
+# WORKDIR /
 
 # Install sageattn
-RUN git clone https://github.com/thu-ml/SageAttention.git SageAttention
-WORKDIR /SageAttention 
-RUN pip install -e .
-
+# RUN git clone https://github.com/thu-ml/SageAttention.git SageAttention
+# WORKDIR /SageAttention 
+# RUN pip install -e .
+ENV TORCH_CUDA_ARCH_LIST="9.0"
+WORKDIR /
+RUN git clone https://github.com/thu-ml/SageAttention.git
+WORKDIR /SageAttention
+RUN sed -i "/compute_capabilities = set()/a compute_capabilities = {\"$TORCH_CUDA_ARCH_LIST\"}" setup.py
+RUN pip install . --no-build-isolation
 # Go back to the root
 WORKDIR /
 # Add application code and scripts
