@@ -66,7 +66,7 @@ RUN chmod +x /usr/local/bin/comfy-node-install
 # Prevent pip from asking for confirmation during uninstall steps in custom nodes
 ENV PIP_NO_INPUT=1
 # install custom nodes using comfy-cli
-RUN comfy-node-install ComfyUI-WanVideoWrapper ComfyUI-VideoHelperSuite cg-use-everywhere ComfyUI_JPS-Nodes ComfyUI-Frame-Interpolation ComfyUI-Easy-Use ComfyLiterals
+# RUN comfy-node-install ComfyUI-WanVideoWrapper ComfyUI-VideoHelperSuite cg-use-everywhere ComfyUI_JPS-Nodes ComfyUI-Frame-Interpolation ComfyUI-Easy-Use ComfyLiterals
 
 # Copy helper script to switch Manager network mode at container start
 COPY scripts/comfy-manager-set-mode.sh /usr/local/bin/comfy-manager-set-mode
@@ -103,9 +103,48 @@ RUN wget -O diffusion_models/wan2.1_t2v_14B_bf16.safetensors "https://huggingfac
 # # Download Wan2.1 14b 480p i2v base model
 # RUN wget --header="Authorization: Bearer ${HUGGINGFACE_ACCESS_TOKEN}" -O diffusion_models/wan2.1_i2v_480p_14B_bf16.safetensors "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/diffusion_models/wan2.1_i2v_480p_14B_bf16.safetensors"
 
+# Clone and install custom nodes
+WORKDIR /comfyui/custom_nodes
+
+
+RUN git clone https://github.com/kijai/ComfyUI-WanVideoWrapper.git ComfyUI-WanVideoWrapper && \
+    cd ComfyUI-WanVideoWrapper && \
+    pip install -r requirements.txt
+
+
+RUN git clone https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite.git ComfyUI-VideoHelperSuite && \
+    cd ComfyUI-VideoHelperSuite && \
+    pip install -r requirements.txt
+
+
+RUN git clone https://github.com/chrisgoringe/cg-use-everywhere.git cg-use-everywhere
+
+
+RUN git clone https://github.com/JPS-GER/ComfyUI_JPS-Nodes.git ComfyUI_JPS-Nodes
+
+
+RUN git clone https://github.com/Fannovel16/ComfyUI-Frame-Interpolation.git ComfyUI-Frame-Interpolation && \
+    cd ComfyUI-Frame-Interpolation && \
+    pip install -r requirements-with-cupy.txt
+
+
+RUN git clone https://github.com/yolain/ComfyUI-Easy-Use.git ComfyUI-Easy-Use && \
+    cd ComfyUI-Easy-Use && \
+    pip install -r requirements.txt
+
+RUN git clone https://github.com/M1kep/ComfyLiterals.git ComfyLiterals
+
+RUN pip list --format=freeze
 # Go back to the root
 WORKDIR /
 
+# Install sageattn
+RUN git clone https://github.com/thu-ml/SageAttention.git SageAttention
+WORKDIR /SageAttention 
+RUN pip install -e .
+
+# Go back to the root
+WORKDIR /
 # Add application code and scripts
 ADD src/start.sh handler.py test_input.json ./
 RUN chmod +x /start.sh
