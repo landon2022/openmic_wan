@@ -743,7 +743,7 @@ def handler(job):
                     video_type = video_info.get("type")
 
                     # skip temp videos
-                    if img_type == "temp":
+                    if video_type == "temp":
                         print(
                             f"worker-comfyui - Skipping video {filename} because type is 'temp'"
                         )
