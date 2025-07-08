@@ -874,7 +874,7 @@ def handler(job):
         final_result["status"] = "success_no_images"
         final_result["images"] = []
 
-    print(f"worker-comfyui - Job completed. Returning {len(output_data)} image(s).")
+    print(f"worker-comfyui - Job completed. Returning {len(output_data)} image/video(s).")
     return final_result
 
 
