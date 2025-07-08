@@ -144,7 +144,7 @@ WORKDIR /
 RUN uv pip install --no-cache torch==2.7.0 torchvision==0.22.0 torchaudio==2.7.0 --index-url https://download.pytorch.org/whl/cu128
 # Install sageattn
 
-RUN pip install https://huggingface.co/Kijai/PrecompiledWheels/resolve/main/sageattention-2.2.0-cp312-cp312-linux_x86_64.whl
+RUN pip install https://huggingface.co/landon2022/sageattn_wheel/resolve/main/sageattention-2.2.0-cp312-cp312-touch2.7-cuda128-linux_x86_64.whl
 
 RUN pip list --format=freeze
 # Add application code and scripts
