@@ -12,8 +12,8 @@ ENV CMAKE_BUILD_PARALLEL_LEVEL=8
 
 # Install Python, git and other necessary tools
 RUN apt-get update && apt-get install -y \
-    python3.12 \
-    python3.12-venv \
+    python3.11 \
+    python3.11-venv \
     git \
     git-lfs \
     wget \
@@ -23,7 +23,7 @@ RUN apt-get update && apt-get install -y \
     libxext6 \
     libxrender1 \
     ffmpeg \
-    && ln -sf /usr/bin/python3.12 /usr/bin/python \
+    && ln -sf /usr/bin/python3.11 /usr/bin/python \
     && ln -sf /usr/bin/pip3 /usr/bin/pip
 
 # Clean up to reduce image size
@@ -136,20 +136,16 @@ RUN git clone https://github.com/M1kep/ComfyLiterals.git ComfyLiterals
 
 RUN pip list --format=freeze
 # Go back to the root
-# WORKDIR /
+WORKDIR /
 
 # Install sageattn
 # RUN git clone https://github.com/thu-ml/SageAttention.git SageAttention
 # WORKDIR /SageAttention 
 # RUN pip install -e .
-ENV TORCH_CUDA_ARCH_LIST="9.0"
-WORKDIR /
-RUN git clone https://github.com/thu-ml/SageAttention.git
-WORKDIR /SageAttention
-RUN sed -i "/compute_capabilities = set()/a compute_capabilities = {\"$TORCH_CUDA_ARCH_LIST\"}" setup.py
-RUN pip install . --no-build-isolation
-# Go back to the root
-WORKDIR /
+
+RUN pip install https://huggingface.co/ModelsLab/Sage_2_plus_plus_build/resolve/main/sageattention-2.2.0-cp311-cp311-linux_x86_64.whl
+
+RUN pip list --format=freeze
 # Add application code and scripts
 ADD src/start.sh handler.py test_input.json ./
 RUN chmod +x /start.sh
