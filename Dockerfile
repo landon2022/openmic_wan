@@ -83,7 +83,7 @@ WORKDIR /comfyui/models
 
 # Download CLIP and text_encoder models
 RUN wget -O clip_vision/clip_vision_h.safetensors "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/clip_vision/clip_vision_h.safetensors"
-RUN wget -O text_encoders/umt5-xxl-enc-fp8_e4m3fn.safetensors "https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/umt5-xxl-enc-fp8_e4m3fn.safetensors"
+RUN wget -O text_encoders/umt5-xxl-enc-bf16.safetensors "https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/umt5-xxl-enc-bf16.safetensors"
 
 # Download upscale models
 RUN wget -O upscale_models/4xLSDIR.pth "https://github.com/Phhofm/models/raw/main/4xLSDIR/4xLSDIR.pth"
@@ -134,14 +134,15 @@ RUN git clone https://github.com/yolain/ComfyUI-Easy-Use.git ComfyUI-Easy-Use &&
 
 RUN git clone https://github.com/M1kep/ComfyLiterals.git ComfyLiterals
 
-RUN pip list --format=freeze
+
+# Download Frame_Interpolation model
+WORKDIR /comfyui/custom_nodes/ComfyUI-Frame-Interpolation/ckpts/rife
+RUN wget -O rife49.pth "https://huggingface.co/Isi99999/Frame_Interpolation_Models/resolve/main/rife49.pth"
+
 # Go back to the root
 WORKDIR /
-
+RUN uv pip install --no-cache torch==2.7.0 torchvision==0.22.0 torchaudio==2.7.0 --index-url https://download.pytorch.org/whl/cu128
 # Install sageattn
-# RUN git clone https://github.com/thu-ml/SageAttention.git SageAttention
-# WORKDIR /SageAttention 
-# RUN pip install -e .
 
 RUN pip install https://huggingface.co/Kijai/PrecompiledWheels/resolve/main/sageattention-2.2.0-cp312-cp312-linux_x86_64.whl
 
