@@ -12,8 +12,8 @@ ENV CMAKE_BUILD_PARALLEL_LEVEL=8
 
 # Install Python, git and other necessary tools
 RUN apt-get update && apt-get install -y \
-    python3.11 \
-    python3.11-venv \
+    python3.12 \
+    python3.12-venv \
     git \
     git-lfs \
     wget \
@@ -23,7 +23,7 @@ RUN apt-get update && apt-get install -y \
     libxext6 \
     libxrender1 \
     ffmpeg \
-    && ln -sf /usr/bin/python3.11 /usr/bin/python \
+    && ln -sf /usr/bin/python3.12 /usr/bin/python \
     && ln -sf /usr/bin/pip3 /usr/bin/pip
 
 # Clean up to reduce image size
@@ -143,7 +143,7 @@ WORKDIR /
 # WORKDIR /SageAttention 
 # RUN pip install -e .
 
-RUN pip install https://huggingface.co/ModelsLab/Sage_2_plus_plus_build/resolve/main/sageattention-2.2.0-cp311-cp311-linux_x86_64.whl
+RUN pip install https://huggingface.co/Kijai/PrecompiledWheels/resolve/main/sageattention-2.2.0-cp312-cp312-linux_x86_64.whl
 
 RUN pip list --format=freeze
 # Add application code and scripts
