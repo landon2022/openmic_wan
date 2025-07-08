@@ -125,7 +125,7 @@ RUN git clone https://github.com/JPS-GER/ComfyUI_JPS-Nodes.git ComfyUI_JPS-Nodes
 
 RUN git clone https://github.com/Fannovel16/ComfyUI-Frame-Interpolation.git ComfyUI-Frame-Interpolation && \
     cd ComfyUI-Frame-Interpolation && \
-    pip install -r requirements-with-cupy.txt
+    pip install -r requirements-no-cupy.txt
 
 
 RUN git clone https://github.com/yolain/ComfyUI-Easy-Use.git ComfyUI-Easy-Use && \
