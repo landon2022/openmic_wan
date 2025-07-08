@@ -66,7 +66,7 @@ RUN chmod +x /usr/local/bin/comfy-node-install
 # Prevent pip from asking for confirmation during uninstall steps in custom nodes
 ENV PIP_NO_INPUT=1
 # install custom nodes using comfy-cli
-RUN comfy-node-install ComfyUI-WanVideoWrapper ComfyUI-VideoHelperSuite cg-use-everywhere ComfyUI_JPS-Nodes ComfyUI-Frame-Interpolation ComfyUI-Easy-Use
+RUN comfy-node-install ComfyUI-WanVideoWrapper ComfyUI-VideoHelperSuite cg-use-everywhere ComfyUI_JPS-Nodes ComfyUI-Frame-Interpolation ComfyUI-Easy-Use ComfyLiterals
 
 # Copy helper script to switch Manager network mode at container start
 COPY scripts/comfy-manager-set-mode.sh /usr/local/bin/comfy-manager-set-mode
@@ -79,7 +79,7 @@ WORKDIR /comfyui/models
 # RUN mkdir -p checkpoints clip clip_vision vae unet diffusion_models text_encoders upscale_models
 
 # Declare build argument for HuggingFace token (must be before any conditional downloads)
-ARG HUGGINGFACE_ACCESS_TOKEN=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
+# ARG HUGGINGFACE_ACCESS_TOKEN=Your_Huggingface_Token
 
 # Download CLIP and text_encoder models
 RUN wget -O clip_vision/clip_vision_h.safetensors "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/clip_vision/clip_vision_h.safetensors"
@@ -95,10 +95,10 @@ RUN wget -O loras/Su_Bounce_Ep50.safetensors "https://huggingface.co/yeqiu168182
 RUN wget -O loras/sh4rpn3ss_e18.safetensors "https://huggingface.co/minaiosu/Alissonerdx/resolve/main/sh4rpn3ss_e18.safetensors"
 
 # Download Wan VAE model
-RUN wget --header="Authorization: Bearer ${HUGGINGFACE_ACCESS_TOKEN}" -O vae/Wan2_1_VAE_bf16.safetensors "https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/Wan2_1_VAE_bf16.safetensors"
+RUN wget -O vae/Wan2_1_VAE_bf16.safetensors "https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/Wan2_1_VAE_bf16.safetensors"
 
 # Download Wan2.1 14b t2v base model
-RUN wget --header="Authorization: Bearer ${HUGGINGFACE_ACCESS_TOKEN}" -O diffusion_models/wan2.1_t2v_14B_bf16.safetensors "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/diffusion_models/wan2.1_t2v_14B_bf16.safetensors"
+RUN wget -O diffusion_models/wan2.1_t2v_14B_bf16.safetensors "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/diffusion_models/wan2.1_t2v_14B_bf16.safetensors"
 
 # # Download Wan2.1 14b 480p i2v base model
 # RUN wget --header="Authorization: Bearer ${HUGGINGFACE_ACCESS_TOKEN}" -O diffusion_models/wan2.1_i2v_480p_14B_bf16.safetensors "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/diffusion_models/wan2.1_i2v_480p_14B_bf16.safetensors"
