@@ -1,5 +1,5 @@
 # Stage 1: Base image with common dependencies
-FROM nvidia/cuda:12.8.1-cudnn-runtime-ubuntu24.04
+FROM nvidia/cuda:12.8.1-cudnn-devel-ubuntu24.04 AS base
 
 # Prevents prompts from packages asking for user input during installation
 ENV DEBIAN_FRONTEND=noninteractive
@@ -14,16 +14,22 @@ ENV CMAKE_BUILD_PARALLEL_LEVEL=8
 RUN apt-get update && apt-get install -y \
     python3.12 \
     python3.12-venv \
+    python3.12-dev \
+    python3-pip \
+    ninja-build \
+    aria2 \
     git \
     git-lfs \
     wget \
+    vim \
     libgl1 \
     libglib2.0-0 \
     libsm6 \
     libxext6 \
     libxrender1 \
     ffmpeg \
-    build-essential\
+    build-essential \
+    gcc \
     && ln -sf /usr/bin/python3.12 /usr/bin/python \
     && ln -sf /usr/bin/pip3 /usr/bin/pip
 
@@ -39,15 +45,24 @@ RUN wget -qO- https://astral.sh/uv/install.sh | sh \
 # Use the virtual environment for all subsequent commands
 ENV PATH="/opt/venv/bin:${PATH}"
 
-# Install comfy-cli + dependencies needed by it to install ComfyUI
-RUN uv pip install comfy-cli pip setuptools wheel
-
 #Install pytorch and cuda wheel
-RUN uv pip install --no-cache torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu128
+# RUN uv pip install --no-cache torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu128
+RUN uv pip install --no-cache torch==2.7.0 torchvision==0.22.0 torchaudio==2.7.0 --index-url https://download.pytorch.org/whl/cu128
+
+# Install comfy-cli + dependencies needed by it to install ComfyUI
+RUN uv pip install comfy-cli pip packaging setuptools wheel pyyaml gdown triton
 
 # Install ComfyUI
 RUN /usr/bin/yes | comfy --workspace /comfyui install --version 0.3.43
 
+# Install sageattn
+RUN pip install https://huggingface.co/landon2022/sageattn_wheel/resolve/main/sageattention-2.2.0-cp312-cp312-linux_x86_64.whl
+
+# Stage 2
+FROM base AS final
+# Make sure to use the virtual environment here too
+ENV PATH="/opt/venv/bin:$PATH"
+RUN pip install opencv-python
 # Change working directory to ComfyUI
 WORKDIR /comfyui
 
@@ -142,10 +157,6 @@ RUN wget -O rife49.pth "https://huggingface.co/Isi99999/Frame_Interpolation_Mode
 
 # Go back to the root
 WORKDIR /
-RUN uv pip install --no-cache torch==2.7.0 torchvision==0.22.0 torchaudio==2.7.0 --index-url https://download.pytorch.org/whl/cu128
-# Install sageattn
-
-RUN pip install https://huggingface.co/landon2022/sageattn_wheel/resolve/main/sageattention-2.2.0-cp312-cp312-linux_x86_64.whl
 
 RUN pip list --format=freeze
 # Add application code and scripts
