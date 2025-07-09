@@ -114,11 +114,13 @@ RUN wget -O loras/sh4rpn3ss_e18.safetensors "https://huggingface.co/minaiosu/Ali
 RUN wget -O vae/Wan2_1_VAE_bf16.safetensors "https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/Wan2_1_VAE_bf16.safetensors"
 
 # Download Wan2.1 14b t2v base model
-RUN wget -O diffusion_models/wan2.1_t2v_14B_bf16.safetensors "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/diffusion_models/wan2.1_t2v_14B_bf16.safetensors"
+# RUN wget -O diffusion_models/wan2.1_t2v_14B_bf16.safetensors "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/diffusion_models/wan2.1_t2v_14B_bf16.safetensors"
 
 # # Download Wan2.1 14b 480p i2v base model
-# RUN wget --header="Authorization: Bearer ${HUGGINGFACE_ACCESS_TOKEN}" -O diffusion_models/wan2.1_i2v_480p_14B_bf16.safetensors "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/diffusion_models/wan2.1_i2v_480p_14B_bf16.safetensors"
+RUN wget -O diffusion_models/wan2.1_i2v_480p_14B_bf16.safetensors "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/diffusion_models/wan2.1_i2v_480p_14B_bf16.safetensors"
 
+# # Download Wan2.1 14b 720p i2v base model
+RUN wget -O diffusion_models/wan2.1_i2v_720p_14B_bf16.safetensors "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/diffusion_models/wan2.1_i2v_720p_14B_bf16.safetensors"
 # Clone and install custom nodes
 WORKDIR /comfyui/custom_nodes
 
@@ -154,6 +156,14 @@ RUN git clone https://github.com/M1kep/ComfyLiterals.git ComfyLiterals
 # Download Frame_Interpolation model
 WORKDIR /comfyui/custom_nodes/ComfyUI-Frame-Interpolation/ckpts/rife
 RUN wget -O rife49.pth "https://huggingface.co/Isi99999/Frame_Interpolation_Models/resolve/main/rife49.pth"
+
+# Rebuild the sageattn wheel for H100
+# ENV TORCH_CUDA_ARCH_LIST="9.0"
+# WORKDIR /
+# RUN git clone https://github.com/thu-ml/SageAttention.git
+# WORKDIR /SageAttention
+# RUN sed -i "/compute_capabilities = set()/a compute_capabilities = {\"$TORCH_CUDA_ARCH_LIST\"}" setup.py
+# RUN pip install . --no-build-isolation
 
 # Go back to the root
 WORKDIR /
